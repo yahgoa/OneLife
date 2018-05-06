@@ -44,6 +44,8 @@
 
 #define MAP_D 64
 #define MAP_NUM_CELLS 4096
+#define MOVE_PANEL_X 320
+#define MOVE_PANEL_Y 180
 
 extern int versionNumber;
 extern int dataVersionNumber;
@@ -1584,7 +1586,7 @@ LivingLifePage::LivingLifePage()
           mChalkBlotSprite( loadWhiteSprite( "chalkBlot.tga" ) ),
           mPathMarkSprite( loadWhiteSprite( "pathMark.tga" ) ),
           mSayField( handwritingFont, 0, 1000, 10, true, NULL,
-                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.-,'?! " ),
+                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ.-,'?! 123456789" ), //Allows you to say numbers
           mDeathReason( NULL ),
           mShowHighlights( true ) {
     
@@ -1635,19 +1637,19 @@ LivingLifePage::LivingLifePage()
     
     
     mNotePaperHideOffset.x = -242;
-    mNotePaperHideOffset.y = -420;
+    mNotePaperHideOffset.y = -420 - MOVE_PANEL_Y; //To line up with zoom
 
 
     mHomeSlipHideOffset.x = 0;
-    mHomeSlipHideOffset.y = -360;
+    mHomeSlipHideOffset.y = -360 - MOVE_PANEL_Y; //To line up with zoom
 
 
     for( int i=0; i<3; i++ ) {    
         mHungerSlipShowOffsets[i].x = -540;
-        mHungerSlipShowOffsets[i].y = -250;
+        mHungerSlipShowOffsets[i].y = -250 - MOVE_PANEL_Y; //To line up with zoom
     
         mHungerSlipHideOffsets[i].x = -540;
-        mHungerSlipHideOffsets[i].y = -370;
+        mHungerSlipHideOffsets[i].y = -370 - MOVE_PANEL_Y; //To line up with zoom
         
         mHungerSlipWiggleTime[i] = 0;
         mHungerSlipWiggleAmp[i] = 0;
@@ -1684,8 +1686,8 @@ LivingLifePage::LivingLifePage()
         mHintSheetSprites[i] = loadSprite( name, false );
         delete [] name;
         
-        mHintHideOffset[i].x = 900;
-        mHintHideOffset[i].y = -370;
+        mHintHideOffset[i].x = 900 + MOVE_PANEL_X; //To line up with zoom 
+        mHintHideOffset[i].y = -370 - MOVE_PANEL_Y; //To line up with zoom
         
         mHintTargetOffset[i] = mHintHideOffset[i];
         mHintPosOffset[i] = mHintHideOffset[i];
@@ -3389,7 +3391,7 @@ void LivingLifePage::drawHungerMaxFillLine( doublePair inAteWordsPos,
     
     
     doublePair barPos = { lastScreenViewCenter.x - 590, 
-                          lastScreenViewCenter.y - 334 };
+                          lastScreenViewCenter.y - 334  - MOVE_PANEL_Y}; //To line up with Zoom
     barPos.x -= 12;
     barPos.y -= 10;
     
@@ -3600,13 +3602,13 @@ void LivingLifePage::draw( doublePair inViewCenter,
     int gridCenterY = 
         lrintf( lastScreenViewCenter.y / CELL_D ) - mMapOffsetY + mMapD/2;
     
-    // more on left and right of screen to avoid wide object tops popping in
-    int xStart = gridCenterX - 7;
-    int xEnd = gridCenterX + 7;
+// more on left and right of screen to avoid wide object tops popping in
+    int xStart = gridCenterX - 10; // 7
+    int xEnd = gridCenterX + 10; // 7
 
-    // more on bottom of screen so that tall objects don't pop in
-    int yStart = gridCenterY - 6;
-    int yEnd = gridCenterY + 4;
+// more on bottom of screen so that tall objects don't pop in
+    int yStart = gridCenterY - 10; // 6
+    int yEnd = gridCenterY + 10; // 4
 
     if( xStart < 0 ) {
         xStart = 0;
@@ -3648,11 +3650,11 @@ void LivingLifePage::draw( doublePair inViewCenter,
     // tiles drawn on top).  However, given that we're not drawing anything
     // else out there, this should be okay from a performance standpoint.
 
-    int yStartFloor = gridCenterY - 4;
-    int yEndFloor = gridCenterY + 3;
+    int yStartFloor = gridCenterY - 7; // 4
+    int yEndFloor = gridCenterY + 6; // 3
 
-    int xStartFloor = gridCenterX - 5;
-    int xEndFloor = gridCenterX + 6;
+    int xStartFloor = gridCenterX - 8; // 5
+    int xEndFloor = gridCenterX + 9; // 6
 
     
 
@@ -6002,7 +6004,7 @@ void LivingLifePage::draw( doublePair inViewCenter,
     // info panel at bottom
     setDrawColor( 1, 1, 1, 1 );
     doublePair panelPos = lastScreenViewCenter;
-    panelPos.y -= 242 + 32 + 16 + 6;
+    panelPos.y -= 242 + 32 + 16 + 6 + MOVE_PANEL_Y; //To line up with Zoom
     drawSprite( mGuiPanelSprite, panelPos );
 
     if( ourLiveObject != NULL &&
@@ -6023,7 +6025,7 @@ void LivingLifePage::draw( doublePair inViewCenter,
 
         for( int i=0; i<ourLiveObject->foodCapacity; i++ ) {
             doublePair pos = { lastScreenViewCenter.x - 590, 
-                               lastScreenViewCenter.y - 334 };
+                               lastScreenViewCenter.y - 334 - MOVE_PANEL_Y }; //To line up with Zoom
         
             pos.x += i * 30;
             drawSprite( 
@@ -6044,7 +6046,7 @@ void LivingLifePage::draw( doublePair inViewCenter,
         for( int i=ourLiveObject->foodCapacity; 
              i < ourLiveObject->maxFoodCapacity; i++ ) {
             doublePair pos = { lastScreenViewCenter.x - 590, 
-                               lastScreenViewCenter.y - 334 };
+                               lastScreenViewCenter.y - 334 - MOVE_PANEL_Y }; //To line up with Zoom
             
             pos.x += i * 30;
             drawSprite( 
@@ -6062,7 +6064,7 @@ void LivingLifePage::draw( doublePair inViewCenter,
                 
         
         doublePair pos = { lastScreenViewCenter.x + 546, 
-                           lastScreenViewCenter.y - 319 };
+                           lastScreenViewCenter.y - 319 - MOVE_PANEL_Y };
 
         if( mCurrentArrowHeat != -1 ) {
             
@@ -6124,7 +6126,7 @@ void LivingLifePage::draw( doublePair inViewCenter,
 
         for( int i=0; i<mOldDesStrings.size(); i++ ) {
             doublePair pos = { lastScreenViewCenter.x, 
-                               lastScreenViewCenter.y - 313 };
+                               lastScreenViewCenter.y - 313  - MOVE_PANEL_Y}; //To line up with Zoom
             float fade =
                 mOldDesFades.getElementDirect( i );
             
@@ -6135,7 +6137,7 @@ void LivingLifePage::draw( doublePair inViewCenter,
 
 
         doublePair atePos = { lastScreenViewCenter.x, 
-                              lastScreenViewCenter.y - 347 };
+                              lastScreenViewCenter.y - 347  - MOVE_PANEL_Y}; //To line up with Zoom
         
         int shortestFill = 100;
         
@@ -6220,7 +6222,7 @@ void LivingLifePage::draw( doublePair inViewCenter,
             
             
             doublePair pos = { lastScreenViewCenter.x, 
-                               lastScreenViewCenter.y - 313 };
+                               lastScreenViewCenter.y - 313  - MOVE_PANEL_Y}; //To line up with Zoom
 
             char *des = NULL;
             char *desToDelete = NULL;
@@ -11912,7 +11914,7 @@ void LivingLifePage::step() {
         // current age
         double age = computeCurrentAge( ourLiveObject );
 
-        int sayCap = (int)( floor( age ) + 1 );
+        int sayCap = (int)( floor( age ) + 100 ); //Ups speech limit by 99 characters across the board
         
         if( ourLiveObject->lineage.size() == 0  && sayCap < 30 ) {
             // eve has a larger say limit
